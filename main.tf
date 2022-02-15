@@ -1,3 +1,5 @@
-resource "aws_s3_bucket" "s3_bucket" {
-bucket_prefix =                                                   "test-"
-}
+resource "null_resource" "example" {
+       triggers                 = {
+       value                        = "A example resource that does nothing!"
+               }
+     }
