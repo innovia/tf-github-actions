@@ -80,10 +80,12 @@ jobs:
       run: terraform validate -no-color
       continue-on-error: true
 
+    # format files
     - name: Terraform Format
       id: fmt
       run: terraform fmt
 
+    # add and commit after format
     - name: Add & Commit
       # You may pin to the exact commit or the version.
       # uses: EndBug/add-and-commit@b5dec7ea7647ed6edf307ec828d3aeb6bca69f63
@@ -108,51 +110,15 @@ jobs:
         # Arguments for the git tag command (the tag name always needs to be the first word not preceded by a hyphen)
         tag: # optional
 
-    # Generates an execution plan for Terraform
-    - name: Terraform Plan
-      id: plan
-      run: terraform plan -no-color
-      continue-on-error: true
-
-      # On push to master, build or change infrastructure according to Terraform configuration files
-      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-    # - name: Terraform Apply
-    #   if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-    #   run: terraform apply -auto-approve
-
-    - name: Reformat Plan
-      id: reformat
-      run: |
-        echo '${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}' \
-        | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt
-
-    - name: Put Plan in Env Var
-      run: |
-        PLAN=$(cat plan.txt)
-        echo "PLAN<<EOF" >> $GITHUB_ENV
-        echo "$PLAN" >> $GITHUB_ENV
-        echo "EOF" >> $GITHUB_ENV
-
-    - name: Post Plan to GitHub PR
+    - name: Post comments to GitHub PR
       uses: mshick/add-pr-comment@v1
       with:
         allow-repeats: true
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         message: |
           const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-          #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-          #### Terraform Plan 📖\` ${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}\`
           #### Terraform Validation 🤖\`${{ steps.validate.outputs.stdout || steps.validate.outputs.stderr }}\`
 
-          <details><summary>Show Plan</summary>
-
-          \`\`\`\n
-          ```diff
-          ${{ env.PLAN }}
-          ```
-          \`\`\`
-
-          </details>
 
           *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
 
@@ -163,4 +129,21 @@ jobs:
             body: output
           })
 
+    - name: Terraform Validate Status
+      if: steps.validate.outcome == 'failure'
+      run: exit 1
 
+    # Generates an execution plan for Terraform
+    - name: Atlantis Plan
+      id: plan
+      uses:  mshick/add-pr-comment@v1
+      with:
+        allow-repeats: true
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        message: "atlantis plan"
+
+#     On push to master, build or change infrastructure according to Terraform configuration files
+#     Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
+#     - name: Terraform Apply
+#       if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+#       run: terraform apply -auto-approve
