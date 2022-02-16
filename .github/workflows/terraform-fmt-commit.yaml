@@ -122,7 +122,7 @@ jobs:
 
     - name: Reformat Plan
       id: reformat
-      run: -|
+      run: |
         echo '${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}' \
         | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt
 
