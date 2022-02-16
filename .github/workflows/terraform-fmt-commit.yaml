@@ -60,7 +60,6 @@ jobs:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         message: |
           #### Terraform Validation
-          \n
 
           ```terraform
           ${{ steps.validate.outputs.stdout || steps.validate.outputs.stderr }}
