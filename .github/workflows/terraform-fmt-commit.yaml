@@ -59,7 +59,10 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           #### Terraform Format \`${{ steps.fmt.outcome }}\`
-          #### Terraform Validation \`${{ steps.validate.outputs.stdout || steps.validate.outputs.stderr }}\`
+          #### Terraform Validation
+          ```terraform
+          ${{ steps.validate.outputs.stdout || steps.validate.outputs.stderr }}
+          ```
 
     - name: Terraform Validate Status
       if: steps.validate.outcome == 'failure'
