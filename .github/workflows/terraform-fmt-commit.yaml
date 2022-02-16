@@ -57,7 +57,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         BUILD_COMMIT=$(git rev-parse HEAD)
-        CONCLUSION=${{ steps.validate.outputs.stdout || steps.validate.outputs.stderr }}
+        CONCLUSION="${{ steps.validate.outputs.stdout || steps.validate.outputs.stderr }}"
         curl \
         -X POST \
         -H "Authorization: Bearer $GITHUB_TOKEN" \
