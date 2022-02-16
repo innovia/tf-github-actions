@@ -58,11 +58,20 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
+          const output = `
           #### Terraform Format \`${{ steps.fmt.outcome }}\`
           #### Terraform Validation
           ```terraform
           ${{ steps.validate.outputs.stdout || steps.validate.outputs.stderr }}
           ```
+          `
+
+          github.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+           repo: context.repo.repo,
+           body: output
+          })
 
     - name: Terraform Validate Status
       if: steps.validate.outcome == 'failure'
