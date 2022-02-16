@@ -58,14 +58,19 @@ jobs:
       with:
        github-token: ${{ secrets.GITHUB_TOKEN }}
        script: |
-         const output = `#### Terraform Format and Style\`${{ steps.fmt.outcome }}\`
-         #### Terraform Validation \`${{ steps.validate.outcome }}\`
+         const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+         #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
 
-         \n
-         ```
-         ${{ steps.validate.outputs.stdout || steps.validate.outputs.stderr }}
-         ```
-         
+         <details><summary>Show Plan</summary>
+
+         \`\`\`\n
+         ${process.env.PLAN}
+         \`\`\`
+
+         </details>
+
+         *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
          github.issues.createComment({
            issue_number: context.issue.number,
            owner: context.repo.owner,
