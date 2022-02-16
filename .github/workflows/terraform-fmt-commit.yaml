@@ -57,12 +57,13 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         BUILD_COMMIT=$(git rev-parse HEAD)
+        CONCLUSION=${{ steps.validate.outputs.stdout || steps.validate.outputs.stderr }}
         curl \
         -X POST \
         -H "Authorization: Bearer $GITHUB_TOKEN" \
         -H "Accept: application/vnd.github.v3+json" \
         https://api.github.com/repos/innovia/tf-github-actions/check-runs \
-        -d '{"name":"Terraform Validate", "head_sha": "'"$BUILD_COMMIT"'", "status": "completed", "conclusion": ${{ steps.validate.outputs.stdout || steps.validate.outputs.stderr }}}'
+        -d '{"name":"Terraform Validate", "head_sha": "'"$BUILD_COMMIT"'", "status": "completed", "conclusion": "'"$CONCLUSION"'"}'
 
     - name: Post comments to GitHub PR
       uses:  actions/github-script@0.9.0
