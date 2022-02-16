@@ -119,9 +119,10 @@ jobs:
     # - name: Terraform Apply
     #   if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     #   run: terraform apply -auto-approve
+
     - name: Reformat Plan
       id: reformat
-      run: |
+      run: -|
         echo '${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}' \
         | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt
 
@@ -135,7 +136,7 @@ jobs:
     - name: Post Plan to GitHub PR
       uses: mshick/add-pr-comment@v1
       with:
-          allow-repeats: true
+        allow-repeats: true
 #         github-token: ${{ secrets.GITHUB_TOKEN }}
         message: |
           const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
