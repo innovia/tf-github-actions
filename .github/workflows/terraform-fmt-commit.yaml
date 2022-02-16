@@ -137,7 +137,7 @@ jobs:
       uses: mshick/add-pr-comment@v1
       with:
         allow-repeats: true
-#         github-token: ${{ secrets.GITHUB_TOKEN }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
         message: |
           const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
           #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
