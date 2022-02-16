@@ -52,21 +52,20 @@ jobs:
         author_name: 'Preset Bot'
         message: 'ran terraform fmt'
 
-
     - name: Post comments to GitHub PR
-      uses: mshick/add-pr-comment@v1
+      uses:  actions/github-script@0.9.0
+      if: github.event_name == 'pull_request'
       with:
-        allow-repeats: true
-        repo-token: ${{ secrets.GITHUB_TOKEN }}
-        message: |
-          const output = `#### Terraform Validation \`${{ steps.validate.outputs.stdout || steps.validate.outputs.stderr }}\`
-          *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-          github.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: output
-          })
+       github-token: ${{ secrets.GITHUB_TOKEN }}
+       script: |
+         const output = `#### Terraform Validation \`${{ steps.validate.outcome }}\`
+
+         github.issues.createComment({
+           issue_number: context.issue.number,
+           owner: context.repo.owner,
+           repo: context.repo.repo,
+           body: output
+         })
 
     - name: Terraform Validate Status
       if: steps.validate.outcome == 'failure'
