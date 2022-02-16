@@ -54,18 +54,18 @@ jobs:
 
     - name: Post Plan to GitHub PR
       uses: mshick/add-pr-comment@v1
-      if: github.event_name == 'pull_request'
+      if: github.event_name == 'pull_request' &&  steps.validate.outcome == 'failure'
       with:
         allow-repeats: true
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         message: |
           #### Terraform Validation
-          \na
+          \n
 
           ```terraform
           ${{ steps.validate.outputs.stdout || steps.validate.outputs.stderr }}
           ```
-          
+
     - name: Terraform Validate Status
       if: steps.validate.outcome == 'failure'
       run: exit 1
