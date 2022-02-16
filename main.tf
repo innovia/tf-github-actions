@@ -1,5 +1,5 @@
 resource "null_resource" "example" {
-  triggers = {
+  triggerss = {
     value = "A example resource that does nothing!"
   }
 }
