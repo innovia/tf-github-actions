@@ -58,6 +58,7 @@ jobs:
       run: |
         BUILD_COMMIT=$(git rev-parse HEAD)
         CONCLUSION="${{ steps.validate.outputs.stdout || steps.validate.outputs.stderr }}"
+        echo "'{"name":"Terraform Validate", "head_sha": "'"$BUILD_COMMIT"'", "status": "completed", "conclusion": "'"$CONCLUSION"'"}'"
         curl \
         -X POST \
         -H "Authorization: Bearer $GITHUB_TOKEN" \
