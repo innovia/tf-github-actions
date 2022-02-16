@@ -120,6 +120,7 @@ jobs:
     #   if: github.ref == 'refs/heads/master' && github.event_name == 'push'
     #   run: terraform apply -auto-approve
     - name: Reformat Plan
+      id: reformat
       run: |
         echo '${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}' \
         | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt
